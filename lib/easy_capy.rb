@@ -1,6 +1,6 @@
 require "easy_capy/version"
 require "exceptions"
-require "Logbert"
+require "logbert"
 
 LOG = Logbert[self]
 
@@ -32,7 +32,7 @@ module EasyCapy
 			select.hover
 		end
 
-		def click_a_button(xpath)
+		def click_an_element(xpath)
 			select = nil
 			while select == nil
 				begin
@@ -54,7 +54,7 @@ module EasyCapy
 				rescue Capybara::ElementNotFound
 					LOG.error("Didn't find xpath: " + xpath)
 					if count >= @timeout
-						raise TooManyChecks.new("Too many checks for xpath #{xpath}")
+						raise TooManyChecks.new("Too many checks for xpath: #{xpath}")
 					else
 						count += 1
 						next
@@ -83,6 +83,30 @@ module EasyCapy
 			rescue Capybara::ElementNotFound
 				return false
 			end
+		end
+
+		#USed to wait for page to be fully loaded before moving on
+		def element_check(xpath)
+			count = 0
+			check = false
+			while check == false
+				begin
+					select = @session.find(:xpath, xpath)
+					if (select != nil)
+						return true
+						end
+					end
+				rescue Capybara::ElementNotFound => e
+					if count >= @timeout
+						raise TooManyChecks.new("too many checks for xpath: #{xpath}")
+					else
+						count += 1
+						next
+					end
+				end
+			end
+
+			return check
 		end
 	end
 end
