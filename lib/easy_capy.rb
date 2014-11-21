@@ -94,7 +94,6 @@ module EasyCapy
 					select = @session.find(:xpath, xpath)
 					if (select != nil)
 						return true
-						end
 					end
 				rescue Capybara::ElementNotFound => e
 					if count >= @timeout
@@ -107,6 +106,10 @@ module EasyCapy
 			end
 
 			return check
+		end
+
+		def has_content_check(check)
+			return @session.has_content? check
 		end
 	end
 end
